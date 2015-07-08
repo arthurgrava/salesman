@@ -63,3 +63,4 @@ target/
 ### IPythonNotebook ###
 # Temporary data
 .ipynb_checkpoints/
+.ipynb
