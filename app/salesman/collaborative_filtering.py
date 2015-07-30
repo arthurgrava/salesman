@@ -59,7 +59,7 @@ class UserBased(object):
 
         return RecommendationModel(observed_data=data, recommendations=recommendations, user_label=user_label, item_label=item_label)
 
-    def _retrieve_similar_users(self, user_id):
+    def _retrieve_similar_users(self, user_id, k=10):
         """
         Calculates the similarity of each user on the data source
         """
@@ -73,7 +73,7 @@ class UserBased(object):
                     ), ignore_index=True
                 )
 
-        return similarity.sort(columns=['user_id', 'score'], ascending=False)
+        return similarity.sort(columns=['user_id', 'score'], ascending=False)[:k]
 
 
     def _retrieve_not_rated_items(self, user_id):
