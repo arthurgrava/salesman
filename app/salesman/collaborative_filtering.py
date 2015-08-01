@@ -23,13 +23,24 @@ class UserBased(object):
         self.means = None
 
 
+    def _validate_input(self, data, user_label, item_label, score_label):
+        """
+        Valides if the expected columns are present on the dataset
+        """
+        if type(data) is pd.DataFrame:
+            columns_name = data.columns
+        else:
+            columns_name = data.column_names()
+        if user_label not in columns_name or item_label not in columns_name or score_label not in columns_name:
+                logger.error(u'Invalid input, a ValueError will be raised')
+                raise ValueError(u'Some of the columns were not found at the data source')
+
+
     def calculate(self, data, user_label=DEFAULT_USER_LABEL, item_label=DEFAULT_ITEM_LABEL, score_label=DEFAULT_SCORE_label_LABEL):
         """
         Calculates a recommendation model
         """
-        if user_label not in data or item_label not in data or score_label not in data:
-            logger.error(u'Invalid output, an ValueError will be raised')
-            raise ValueError(u'Some of the columns were not found at the data source')
+        self._validate_input(data, user_label, item_label, score_label)
 
         logger.info(u'Initiating UserBased collaborative filtering calculation')
 
@@ -45,23 +56,35 @@ class UserBased(object):
 
         total_users = len(self.users)
 
+        logger.info(u'Starting to calculate the mean rate of each user, the total number of users is -- {0}'.format(total_users))
         # calculates the mean score for every user
         for user_id in self.users:
             detail_data = data[data[user_label] == user_id][score_label]
-            self.means[user_id] = sum(detail_data) / len(detail_data)
+            sample_mean = len(detail_data)
+            if sample_mean:
+                self.means[user_id] = sum(detail_data) / len(detail_data)
+            else:
+                self.means[user_id] = 0.0
+            logger.info(u'Mean rate calculated for user -- {0}, value is -- {1}'.format(user_id, self.means[user_id]))
 
         for user_id in self.users:
             logger.info(u'Predicting entries for user -- {0}, total users is -- {1}'.format(user_id, total_users))
             similar_users = self._retrieve_similar_users(user_id)
             not_rated_items = self._retrieve_not_rated_items(user_id)
             user_data = data[data[user_label] == user_id]
-            for item_id in not_rated_items:
-                predicted = self._predict(user_id, similar_users, item_id)
-                if predicted > 0:
-                    recommendations = recommendations.append(pd.DataFrame(
-                        [[user_id, item_id, predicted]],
-                        columns=[user_label, item_label, u'predicted'],
-                    ), ignore_index=True)
+            try:
+                for item_id in not_rated_items:
+                    predicted = self._predict(user_id, similar_users, item_id)
+                    logger.debug(u'Predicted rate for user -- "{0}" on item -- "{1}"'.format(user_id, item_id))
+                    if predicted > 0:
+                        recommendations = recommendations.append(pd.DataFrame(
+                            [[user_id, item_id, predicted]],
+                            columns=[user_label, item_label, u'predicted'],
+                        ), ignore_index=True)
+            except Exception, e:
+                logger.error(u'An error occurred when predicting the rating')
+                logger.exception(e)
+                return
         
         logger.info(u'All recommendations were calculated, a RecommendationModel will be instanciated')
         recommendations = recommendations.sort(columns=[user_label, 'predicted'], ascending=False)
@@ -106,8 +129,8 @@ class UserBased(object):
         up_equation = self.means[user_id]
         for similar_id in similar_users['similar_id']:
             similarity = sum(similar_users[similar_users['similar_id'] == similar_id]['score'])
-            medium_similar_rate = (sum(sample[sample[self.user_label] == similar_id][self.item_label]) - self.means[similar_id])
-            up_equation += (similarity * medium_similar_rate)
+            mean_similar_rate = (sum(sample[sample[self.user_label] == similar_id][self.score_label]) - self.means[similar_id])
+            up_equation += (similarity * mean_similar_rate)
         
         return up_equation / down_equation
 
