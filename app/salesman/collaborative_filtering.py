@@ -1,11 +1,12 @@
 #encoding:utf-8
+import logging
 import pandas as pd
-from models import RecommendationModel
 from comparator import pearson
+from conf import *
+from models import RecommendationModel
 
-DEFAULT_USER_LABEL = u'user_id'
-DEFAULT_ITEM_LABEL = u'item_id'
-DEFAULT_SCORE_label_LABEL = u'score'
+
+logger = logging.getLogger(APP)
 
 
 class UserBased(object):
@@ -27,7 +28,10 @@ class UserBased(object):
         Calculates a recommendation model
         """
         if user_label not in data or item_label not in data or score_label not in data:
+            logger.error(u'Invalid output, an ValueError will be raised')
             raise ValueError(u'Some of the columns were not found at the data source')
+
+        logger.info(u'Initiating UserBased collaborative filtering calculation')
 
         # defining class attributes
         self.data = data
@@ -39,12 +43,15 @@ class UserBased(object):
         self.means = {}
         recommendations = pd.DataFrame()
 
+        total_users = len(self.users)
+
         # calculates the mean score for every user
         for user_id in self.users:
             detail_data = data[data[user_label] == user_id][score_label]
             self.means[user_id] = sum(detail_data) / len(detail_data)
 
         for user_id in self.users:
+            logger.info(u'Predicting entries for user -- {0}, total users is -- {1}'.format(user_id, total_users))
             similar_users = self._retrieve_similar_users(user_id)
             not_rated_items = self._retrieve_not_rated_items(user_id)
             user_data = data[data[user_label] == user_id]
@@ -55,6 +62,8 @@ class UserBased(object):
                         [[user_id, item_id, predicted]],
                         columns=[user_label, item_label, u'predicted'],
                     ), ignore_index=True)
+        
+        logger.info(u'All recommendations were calculated, a RecommendationModel will be instanciated')
         recommendations = recommendations.sort(columns=[user_label, 'predicted'], ascending=False)
 
         return RecommendationModel(observed_data=data, recommendations=recommendations, user_label=user_label, item_label=item_label)
@@ -73,6 +82,7 @@ class UserBased(object):
                     ), ignore_index=True
                 )
 
+        logger.info(u'Similar users gathered for user -- {0}'.format(user_id))
         return similarity.sort(columns=['user_id', 'score'], ascending=False)[:k]
 
 
@@ -81,6 +91,7 @@ class UserBased(object):
         Retrieve all items that the user did not rate
         """
         rated = set(self.data[self.data[self.user_label] == user_id][self.item_label])
+        logger.info(u'Not rated items gathered for user -- {0}'.format(user_id))
         return list(self.items - rated)
 
 

@@ -1,15 +1,16 @@
 #encoding:utf-8
+import logging
+from conf import *
 
 
-DEFAULT_SOURCE_ID = u'user_id'
-DEFAULT_TARGET_ID = u'item_id'
-DEFAULT_LIMIT = 16
+logger = logging.getLogger(APP)
+
 
 class RecommendationModel(object):
     """
     Basic recommendation model
     """
-    def __init__(self, observed_data, recommendations, user_label=DEFAULT_SOURCE_ID, item_label=DEFAULT_TARGET_ID):
+    def __init__(self, observed_data, recommendations, user_label=DEFAULT_USER_LABEL, item_label=DEFAULT_ITEM_LABEL):
         self.observed_data = observed_data
         self.recommendations = recommendations
         self.user_label = user_label
@@ -20,6 +21,7 @@ class RecommendationModel(object):
         """
         Returns recommendations for the specified user
         """
+        logger.info(u'Retrieving recommendations for user -- {0} with limit -- {1}'.format(user_id, limit))
         return self.recommendations[self.recommendations[self.user_label] == user_id]
 
 
