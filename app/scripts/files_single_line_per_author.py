@@ -54,7 +54,7 @@ print len(count)
 
 sframe = sframe.filter_by(count['author'].unique(), 'author')
 
-# normalizing score
+# normalizing score, what I'm doing is creating too many zeros
 _max = float(sframe['score'].max())
 _min = float(sframe['score'].min())
 sframe['score'] = sframe['score'].apply(lambda x: (float(x) - _min) / (_max - _min))
