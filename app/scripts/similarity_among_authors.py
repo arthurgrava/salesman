@@ -36,7 +36,7 @@ for i in range(0, size):
             compared_to.append(ratings[j]['author'])
             correlation.append(sim)
     similarity = gl.SFrame({'author': author, 'compared_to': compared_to, 'correlation': correlation})
-    corr = corr.append(similarity.topk('correlation', k = 10))
+    corr = corr.append(similarity.topk('correlation', k = 50))
     author = []; compared_to = []; correlation = []
 
 corr.save('/Users/tutu/personal/git/data/author_pearson_correlated_without_counting.csv')

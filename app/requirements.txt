@@ -1,2 +1,5 @@
 numpy==1.9.2
 pandas==0.16.0
+graphlab-create==1.1
+scipy==0.15.1
+
