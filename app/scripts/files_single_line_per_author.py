@@ -32,6 +32,12 @@ grouped = sframe.groupby(
 )
 grouped.save('/Users/tutu/personal/git/data/authors_reference_single_line_without_counting.csv', format='csv')
 
+means = sframe.groupby(
+    key_columns='author',
+    operations={'mean_rate': agg.AVG('score')}
+)
+means.save('/Users/tutu/personal/git/data/authors_without_counting_means.csv', format='csv')
+
 # gl.distances.cosine(grouped[grouped['author'] == 'cornejo dr'][0]['ratings'], grouped[grouped['author'] == 'azevedo a'][0]['ratings'])
 
 """ Attempt number two """
@@ -57,10 +63,16 @@ sframe = sframe.filter_by(count['author'].unique(), 'author')
 # normalizing score, what I'm doing is creating too many zeros
 _max = float(sframe['score'].max())
 _min = float(sframe['score'].min())
-sframe['score'] = sframe['score'].apply(lambda x: (float(x) - _min) / (_max - _min))
+sframe['score'] = sframe['score'].apply(lambda x: ((float(x) - _min) / (_max - _min)) + 1)
 
 grouped = sframe.groupby(
     key_columns='author',
     operations={'ratings': agg.CONCAT('reference', 'score')}
 )
 grouped.save('/Users/tutu/personal/git/data/authors_reference_single_line_with_counting.csv', format='csv')
+
+means = sframe.groupby(
+    key_columns='author',
+    operations={'mean_rate': agg.AVG('score')}
+)
+means.save('/Users/tutu/personal/git/data/authors_with_counting_means.csv', format='csv')
