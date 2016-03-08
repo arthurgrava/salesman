@@ -7,15 +7,15 @@ This script was created to generated the following files:
 """
 # needed constants
 AMOUNT_OF_PUBLISHED_ARTICLES = 24.0
-BASE_PATH = '/Users/tutu/personal/git/data'
+BASE_PATH = '/home/arthur/work/data'
 NORMALIZED_PATH = 'normalized' # when we count how many times the author has cited an article
 UNORMALIZED_PATH = 'unormalized' # when we doesn't cara about how many times the author has cited an article
 
-AUTHORS_PATH =  'authors_citations_{}.csv'.format(int(AMOUNT_OF_PUBLISHED_ARTICLES))
+AUTHORS_PATH =  'authors_citations_full_{}.csv'.format(int(AMOUNT_OF_PUBLISHED_ARTICLES))
 AUTHORS_MEANS_PATH = 'authors_means_{}.csv'.format(int(AMOUNT_OF_PUBLISHED_ARTICLES))
 
 # loads the file and applies some filters
-authors_data = gl.SFrame.read_csv('/Users/tutu/personal/git/data/authors_articles_referenced.csv', delimiter='\t', column_type_hints=[str, str, float])
+authors_data = gl.SFrame.read_csv('/home/arthur/work/data/authors_articles_referenced.csv', delimiter='\t', column_type_hints=[str, str, float])
 authors_data = authors_data[authors_data['reference'] != '']
 
 

@@ -1,11 +1,22 @@
 #encoding:utf-8
-import graphlab as gl
-import graphlab.aggregate as agg
+import sys
 
 
-data = gl.SFrame.read_csv('/Users/tutu/personal/git/data/non_zero_comparison_nocount.csv', delimiter=',', column_type_hints=[str, str, float])
-grouped = data.groupby(
-    key_columns='author',
-    operations={'similars': agg.CONCAT('similar', 'score')}
-)
-grouped.save('/Users/tutu/personal/git/data/non_zero_comparison_nocount_oneline.csv', format='csv')
+def run(source, target):
+    import graphlab as gl
+    import graphlab.aggregate as agg
+    data = gl.SFrame.read_csv(source, delimiter=',', column_type_hints=[str, str, float], header=False)
+    data.rename({'X1': 'author', 'X2': 'similar', 'X3': 'score'})
+    grouped = data.groupby(
+        key_columns='author',
+        operations={'similars': agg.CONCAT('similar', 'score')}
+    )
+    grouped.save(target, format='csv')
+
+
+if __name__ == '__main__':
+    source = sys.argv[1]
+    target = sys.argv[2]
+    if not source or not target:
+        raise Exception('You must specify a source and a target file path')
+    run(source, target)
