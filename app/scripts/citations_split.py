@@ -92,10 +92,10 @@ grouped_citations = train.groupby(
     key_columns='author',
     operations={'ratings': agg.CONCAT('reference', 'score')},
 )
-path = '{0}/{1}/citations_train_24.csv'.format(BASE_PATH, NORMALIZED_PATH, AUTHORS_PATH)
+path = '{0}/{1}/citations_train_75.csv'.format(BASE_PATH, NORMALIZED_PATH, AUTHORS_PATH)
 grouped_citations.save(path, format='csv')
 
-path = '{0}/{1}/citations_test_24.csv'.format(BASE_PATH, NORMALIZED_PATH, AUTHORS_PATH)
+path = '{0}/{1}/citations_test_75.csv'.format(BASE_PATH, NORMALIZED_PATH, AUTHORS_PATH)
 test.save(path, format='csv')
 
 print 'Script ended'
