@@ -14,11 +14,26 @@ K = 5
 def _print(satk, mrr, recall, precision):
     print('\n' + ('-' * 79))
     print('| Score | k=5 | k=10 | k=15 | k=20 | k=25')
-    print('| S@K | {}'.format(', '.join([str(round(val, 5) * 100) for val in satk])))
-    print('| MRR | {}'.format(', '.join([str(round(val, 5)) for val in mrr])))
-    print('| Recall | {}'.format(', '.join([str(round(val, 5)) for val in recall])))
-    print('| Precision | {}'.format(', '.join([str(round(val, 5)) for val in precision])))
+    print('| S@K | {}'.format(' | '.join([str(round(val, 5) * 100) for val in satk])))
+    print('| MRR | {}'.format(' | '.join([str(round(val, 5)) for val in mrr])))
+    print('| Recall | {}'.format(' | '.join([str(round(val, 5)) for val in recall])))
+    print('| Precision | {}'.format(' | '.join([str(round(val, 5)) for val in precision])))
     print(('-' * 79) + '\n')
+
+
+def _print2(satk, mrr, recall, precision):
+    lines = ''
+    for idx in range(1, 6):
+        x = K * idx
+        i = idx - 1
+        lines = '\\textbf{} & {} & {} & {} & {}'.format(
+            '{' + str(x) + '}',
+            str(round(satk[i] * 100, 5)),
+            str(round(mrr[i], 5)),
+            str(round(recall[i], 5)),
+            str(round(precision[i], 5)),
+        )
+        print(lines)
 
 
 def calculate(filepath, n_ratings):
@@ -40,7 +55,7 @@ def calculate(filepath, n_ratings):
         recall.append(sf['recall-{}'.format(pos)].mean())
         precision.append(sf['precision-{}'.format(pos)].mean())
 
-    _print(satk, mrr, recall, precision)
+    _print2(satk, mrr, recall, precision)
 
 
 if __name__ == '__main__':
