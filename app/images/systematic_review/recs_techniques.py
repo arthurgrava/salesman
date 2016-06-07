@@ -35,4 +35,5 @@ plt.xticks(index + (bar_width / 2.0) + dev, metrics)
 plt.legend()
 
 plt.tight_layout()
-plt.show()
+# plt.show()
+plt.savefig('/home/arthur/work/tese/images/used_techniques.png', dpi=290)
