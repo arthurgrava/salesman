@@ -11,13 +11,8 @@
 - [x] Arrumar as referências (Algumas das referências utilizadas)
 - [x] Remover o novos itens da apresentação (não falamos sobre eles na dissertação)
 - [x] Remover tabela do Epinions dos resultados da revisão sistemática
+- [ ] Inserir a referência do Precision e Recall, tocar nesse ponto
+- [ ] Dar um zoom em uma das métricas nas imagens de resultado para melhor visualização
 - [x] Como nós fizemos a validação, explicação em text [DONE]
    
-   - [ ] Se ruim utilizar uma figura
-
-----
-
-### Possíveis modificações
-
-- [ ] Possívelmente aumentar o tamanho da legenda
-- [ ] Talvez mudar o posicionamento do fluxograma
+   - [ ] Se ruim utilizar uma figura (o que conta em termos globais é a abordagem 1, Falar disso, a 2 consegue ver na localidade)
